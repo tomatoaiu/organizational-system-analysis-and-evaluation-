@@ -1,7 +1,7 @@
 ; x: -2 ~ 2
 ; y: -10 ~ 10
 
-turtles-own [ lane ] ; スピード お客様が進むレーン
+turtles-own [ lane purchasedTicketsInAdvance ] ; スピード チケットを事前購入したかどうか
 
 to setup
   clear-all
@@ -53,10 +53,28 @@ to setup-turtles
   set-default-shape turtles "arrow" ; タートルの形を人にする
   create-turtles NumCustomers
   ask turtles [
-    set lane random 5 - 2
-    set xcor lane
     set ycor -10
     set heading 0
+
+
+    ifelse TicketPurchaseAtRandom?
+    [
+      ; チケットをランダムで購入した場合
+      set lane random 5 - 2 ; -2 ~ 2
+      set xcor lane
+    ]
+    [
+      ; チケットを事前購入した場合
+      set purchasedTicketsInAdvance random 10 ; 0 ~ 9
+      if (purchasedTicketsInAdvance <= ProbabilityOfPurchasedTicketsInAdvanceParcent) [
+        set lane -2
+        set xcor lane
+      ]
+      if (purchasedTicketsInAdvance > ProbabilityOfPurchasedTicketsInAdvanceParcent) [
+        set lane random 4 - 1 ; -1 ~ 2
+        set xcor lane
+      ]
+    ]
   ]
 end
 
@@ -97,9 +115,9 @@ to bought-ticket
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-329
+396
 29
-462
+529
 563
 -1
 -1
@@ -169,9 +187,9 @@ count turtles
 11
 
 INPUTBOX
-471
+538
 63
-620
+687
 123
 NumCustomers
 100.0
@@ -180,9 +198,9 @@ NumCustomers
 Number
 
 INPUTBOX
-472
+539
 214
-621
+647
 274
 MadoguchiSpeed
 3.0
@@ -191,9 +209,9 @@ MadoguchiSpeed
 Number
 
 INPUTBOX
-475
+542
 135
-704
+647
 195
 KenbaikiSpeed
 2.0
@@ -202,10 +220,10 @@ KenbaikiSpeed
 Number
 
 INPUTBOX
-472
-314
-701
-374
+542
+293
+648
+353
 InternetSpeed
 1.0
 1
@@ -220,7 +238,29 @@ CHOOSER
 LaneType
 LaneType
 "A" "B" "C"
-2
+0
+
+INPUTBOX
+538
+400
+775
+460
+ProbabilityOfPurchasedTicketsInAdvanceParcent
+5.0
+1
+0
+Number
+
+SWITCH
+156
+260
+376
+293
+TicketPurchaseAtRandom?
+TicketPurchaseAtRandom?
+1
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
