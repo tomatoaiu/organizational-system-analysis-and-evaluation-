@@ -1,7 +1,7 @@
 ; x: -2 ~ 2
 ; y: -10 ~ 10
 
-turtles-own [ lane ] ; お客様が進むレーン
+turtles-own [ lane ] ; スピード お客様が進むレーン
 
 to setup
   clear-all
@@ -24,11 +24,25 @@ end
 to setup-patches
   ask patches [
     set pcolor white
-    if (pycor > -9) and (pycor < 10) [
+    if (LaneType = "A")[
+      if (pxcor = -2) [ set pcolor red ]
+      if (pxcor = -1) [ set pcolor blue ]
+      if (pxcor = -0) [ set pcolor yellow ]
+      if (pxcor = 1) [ set pcolor yellow ]
+      if (pxcor = 2) [ set pcolor yellow ]
+    ]
+    if (LaneType = "B")[
       if (pxcor = -2) [ set pcolor red ]
       if (pxcor = -1) [ set pcolor blue ]
       if (pxcor = -0) [ set pcolor blue ]
       if (pxcor = 1) [ set pcolor yellow ]
+      if (pxcor = 2) [ set pcolor yellow ]
+    ]
+    if (LaneType = "C")[
+      if (pxcor = -2) [ set pcolor red ]
+      if (pxcor = -1) [ set pcolor blue ]
+      if (pxcor = -0) [ set pcolor blue ]
+      if (pxcor = 1) [ set pcolor blue ]
       if (pxcor = 2) [ set pcolor yellow ]
     ]
   ]
@@ -37,9 +51,10 @@ end
 ; お客様の設定(タートルの設定)
 to setup-turtles
   set-default-shape turtles "arrow" ; タートルの形を人にする
-  create-turtles 5
+  create-turtles NumCustomers
   ask turtles [
-    set xcor random 5
+    set lane random 5 - 2
+    set xcor lane
     set ycor -10
     set heading 0
   ]
@@ -47,8 +62,30 @@ end
 
 to move-turtles
   ask turtles [
-    ;right random 360
-    forward 1
+    ; このエージェントの前に何もなければ進む
+    if (not any? turtles-on patch-ahead 1) [
+      if (LaneType = "A") [
+        if (lane = -2) [ if ticks mod InternetSpeed = 0 [ forward 1 ] ]
+        if (lane = -1) [ if ticks mod MadoguchiSpeed = 0 [ forward 1 ] ]
+        if (lane = 0) [ if ticks mod KenbaikiSpeed = 0 [ forward 1 ] ]
+        if (lane = 1) [ if ticks mod KenbaikiSpeed = 0 [ forward 1 ] ]
+        if (lane = 2) [ if ticks mod KenbaikiSpeed = 0 [ forward 1 ] ]
+      ]
+      if (LaneType = "B") [
+        if (lane = -2) [ if ticks mod InternetSpeed = 0 [ forward 1 ] ]
+        if (lane = -1) [ if ticks mod MadoguchiSpeed = 0 [ forward 1 ] ]
+        if (lane = 0) [ if ticks mod MadoguchiSpeed = 0 [ forward 1 ] ]
+        if (lane = 1) [ if ticks mod KenbaikiSpeed = 0 [ forward 1 ] ]
+        if (lane = 2) [ if ticks mod KenbaikiSpeed = 0 [ forward 1 ] ]
+      ]
+      if (LaneType = "C") [
+        if (lane = -2) [ if ticks mod InternetSpeed = 0 [ forward 1 ] ]
+        if (lane = -1) [ if ticks mod MadoguchiSpeed = 0 [ forward 1 ] ]
+        if (lane = 0) [ if ticks mod MadoguchiSpeed = 0 [ forward 1 ] ]
+        if (lane = 1) [ if ticks mod MadoguchiSpeed = 0 [ forward 1 ] ]
+        if (lane = 2) [ if ticks mod KenbaikiSpeed = 0 [ forward 1 ] ]
+      ]
+    ]
   ]
 end
 
@@ -60,10 +97,10 @@ to bought-ticket
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
-465
-42
-598
-576
+329
+29
+462
+563
 -1
 -1
 25.0
@@ -84,7 +121,7 @@ GRAPHICS-WINDOW
 1
 1
 ticks
-4.0
+60.0
 
 BUTTON
 44
@@ -130,6 +167,60 @@ count turtles
 17
 1
 11
+
+INPUTBOX
+471
+63
+620
+123
+NumCustomers
+100.0
+1
+0
+Number
+
+INPUTBOX
+472
+214
+621
+274
+MadoguchiSpeed
+3.0
+1
+0
+Number
+
+INPUTBOX
+475
+135
+704
+195
+KenbaikiSpeed
+2.0
+1
+0
+Number
+
+INPUTBOX
+472
+314
+701
+374
+InternetSpeed
+1.0
+1
+0
+Number
+
+CHOOSER
+149
+180
+287
+225
+LaneType
+LaneType
+"A" "B" "C"
+2
 
 @#$#@#$#@
 ## WHAT IS IT?
